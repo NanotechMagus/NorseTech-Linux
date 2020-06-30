@@ -1,48 +1,33 @@
-============
-Novel Requisition of Sensitive Electronic Technology (NoRSE-Tech)
-============
+Novel Requisition of Sensitive Electronic Technology (Norse-Tech)
+========
 
-NorseTech is a project created for a Marymount University capstone project over the summer of 2020 designed to automate the process of creating secure forensic containers of attached digital media, and create a PDF of an initial file analysis.
+Norse-Tech is a project created for a Marymount University capstone project over the summer of 2020 designed to automate the process of creating secure forensic containers of attached digital media, and create a PDF of an initial file analysis.
 
-Features:
+Features
+--------
 
 - Automated secure file container creation of inserted digital media
 - Automated analysis of secure file containers
 
-Contributions and comments are welcome using Github at:
-https://github.com/NanotechMagus/NorseTech-Linux
-
-Please note that project-name requires:
-
-TODO:
-- package-a >= 1.2.3
-- package-b
-
 Installation
-============
+------------
 
-#. TODO: Write the installation
+Install $project by running:
 
-Configuration
-=============
+    (Working on this, please bear with us)
 
-TODO: Necessary settings, cache requirements, etc.
+Contribute
+----------
 
-Documentation
-=============
+- Issue Tracker: https://github.com/NanotechMagus/NorseTech-Linux/issues
+- Source Code: https://github.com/NanotechMagus/NorseTech-Linux
 
-RTFD link if existent
+Support
+-------
 
-Usage
-=====
+If you are having issues, please let us know.
 
-Only if no RTFD documentation supplied
+License
+-------
 
-Bugs & Contribution
-===================
-
-Please use Github to report bugs, feature requests and submit your code:
-http://github.com/centralniak/project-name
-
-:author: Brandon Frostbourne
-:date: 2020/06/30
+The project is licensed under the MIT license.

@@ -6,3 +6,9 @@
 
 # Third Party Imports
 
+
+class NorseTech:
+
+    def __init__(self):
+        self.self = ""
+
