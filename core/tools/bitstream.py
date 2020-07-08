@@ -1,6 +1,7 @@
 #!/bin/python3.8
 
 # Standard Library Imports
+import os
 import subprocess
 from pathlib import Path
 import asyncio
@@ -40,3 +41,5 @@ class SecureCopy:
         """Provides the location for sfsimage as a Path
         """
         return Path(self.__loc / "core" / "external" / "sfsi" / "sfsimage")
+
+

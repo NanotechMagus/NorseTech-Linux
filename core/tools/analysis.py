@@ -1,7 +1,7 @@
 #!/bin/python3.8
 
 # Standard Library Imports
-import os
+import os, sys
 from pathlib import Path
 
 # Locally Developed Imports
@@ -108,3 +108,45 @@ class Norsalysis:
     def __jsonconv(self, conv: dict):
         import json
         return json.dumps(conv)
+
+
+class DeviceInfo:
+    #TODO: Write Documentation for this class
+
+    def __init__(self, cmd="smartctl", devloc=None):
+        if not os.getuid() == 0:
+            raise PermissionError
+        self.__cmd = cmd
+        self.devloc = devloc
+        self.devinf = {}
+
+    def __cmd_me(self, param):
+        params = {
+            "scan": f"{self.__cmd} --scan",
+            "test": f"{self.__cmd} --test = short /dev/{self.devloc}",
+            "standard": f"{self.__cmd} -{param} /dev/{self.devloc}"
+        }
+
+        if not param in params.keys():
+            return params["standard"]
+        else:
+            return params[param]
+
+    def dev_name_scl(self):
+        getdata = os.popen(self.__cmd_me("scan"))
+        splitdata = (getdata.read()).split(' ')
+
+        tempsplit = splitdata[0].split('/')
+        self.devloc = tempsplit[2]
+
+    def dev_info_scl(self):
+        getdata = os.popen(self.__cmd_me("i"))
+        readdata = getdata.read().splitlines()
+
+        for x in range(4, len(readdata) -1):
+            lines = readdata[x]
+            tempdata = lines.split(':')
+            self.devinf[tempdata[0]] = tempdata[1]
+
+    def dev_info_hdp(self):
+        getdata = os.popen(self.__cmd_me("I"))
