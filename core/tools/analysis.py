@@ -1,7 +1,9 @@
 #!/bin/python3.8
 
 # Standard Library Imports
-import os, platform
+import os
+import platform
+import re
 from pathlib import Path
 
 # Locally Developed Imports
@@ -114,40 +116,79 @@ class Norsalysis:
 class DeviceInfo:
     #TODO: Write Documentation for this class
 
-    def __init__(self, cmd="smartctl", devloc=None):
+    def __init__(self):
         if not os.getuid() == 0:
             raise PermissionError
-        self.__cmd = cmd
-        self.devloc = devloc
+        self.devloc = None
         self.devinf = {}
 
-    def __cmd_me(self, param):
-        params = {
-            "scan": f"{self.__cmd} --scan",
-            "test": f"{self.__cmd} --test = short /dev/{self.devloc}",
-            "standard": f"{self.__cmd} -{param} /dev/{self.devloc}"
-        }
-
-        if not param in params.keys():
-            return params["standard"]
-        else:
-            return params[param]
-
-    def dev_name_scl(self):
-        getdata = os.popen(self.__cmd_me("scan"))
-        splitdata = (getdata.read()).split(' ')
-
-        tempsplit = splitdata[0].split('/')
-        self.devloc = tempsplit[2]
-
     def dev_info_scl(self):
-        getdata = os.popen(self.__cmd_me("i"))
-        readdata = getdata.read().splitlines()
+        readdata = self.dev_getdata("smartctl", "-i")
 
         for x in range(4, len(readdata) -1):
             lines = readdata[x]
             tempdata = lines.split(':')
             self.devinf[tempdata[0]] = tempdata[1]
 
-    def dev_info_hdp(self):
-        getdata = os.popen(self.__cmd_me("I"))
+    def dev_usb_info(self, devusb):
+        # Take BUS:Device location, update initial drive information
+        drakken = re.compile(r'sd.')
+        party = re.compile(r':')
+        try:
+            readdata = self.dev_getdata("lsusb", f"-v -s {devusb}")
+
+            for x in range(len(readdata)):
+                lines = readdata[x]
+                if party.search(lines):
+                    tempdata = lines.split(':')
+                    self.devinf["USBInfo"][tempdata[0]] = tempdata[1]
+                    if drakken.search(tempdata[1]):
+                        self.devloc = drakken.search(tempdata[1])
+        except FileNotFoundError as err:
+            print(f'Error! {err}')
+
+    def dev_block_info(self, devblock):
+        # Take block address, update drive information
+        party = re.compile(r':')
+        try:
+            self.devloc = f"/dev/{devblock}"
+            readdata = self.dev_getdata("lsblk", f"-O {self.devloc}")
+
+            for x in range(len(readdata)):
+                lines = readdata[x]
+                if party.search(lines):
+                    tempdata = lines.split(':')
+                    self.devinf["BlockInfo"][tempdata[0]] = tempdata[1]
+        except FileNotFoundError as err:
+            print(f'Error! {err}')
+
+
+    def dev_getdata(self, cmd, params):
+        if not self.devloc:
+            getdata = os.popen(f"{cmd} {params}")
+        else:
+            getdata = os.popen(f"{cmd} {params} {self.devloc}")
+        return getdata.read().splitlines()
+
+    def dev_info_parser(self, devinfo):
+        maze = {
+            "usb": self.dev_usb_info,
+            "sd.": self.dev_block_info
+        }
+        labyrinth = re.compile(r'usb\d|sd.')
+        minotaur = RegexDict(maze)
+        bull = labyrinth.search(devinfo)
+
+        for axe in minotaur.get_matching(bull):
+            if bull == "usb":
+                lunrex = re.compile(r'\d:\d')
+                axe(lunrex.search(devinfo))
+            else:
+                axe(bull)
+
+
+class RegexDict(dict):
+
+    def get_matching(self, event):
+        return (self[key] for key in self if re.match(key, event))
+
