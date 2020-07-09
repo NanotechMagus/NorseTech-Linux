@@ -22,13 +22,12 @@ import pyudev
 
 
 def main():
-
+    config = {}
     while True:
-        monitor_loop()
+        monitor_loop(config)
 
 
-def monitor_loop():
-    labyrinth = re.compile(r'usb\d|sd.')
+def monitor_loop(config: dict):
 
     context = pyudev.Context()
     minotaur = pyudev.Monitor.from_netlink(context)
@@ -37,7 +36,8 @@ def monitor_loop():
     for device in iter(minotaur.poll, None):
         if device.action == 'add':
             try:
-                norse(labyrinth.search(str(device)))
+                maze = norse(config)
+                maze.workhorse(device)
             except FileNotFoundError:
                 print(f'Cannot find device or device does not exist.  Please try again later.')
                 sys.exit(0)
