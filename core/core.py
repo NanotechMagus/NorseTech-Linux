@@ -13,11 +13,12 @@ import asyncio
 
 class NorseTech:
 
-    def __init__(self, devloc: str):
+    def __init__(self, config: dict):
         self.diskinfo = []
-        self.devloc = Path('/' + devloc)
+        self.devloc = Path('/' + config['devloc'])
+        self.forloc = Path(config['forloc'])
 
-    def workhorse(self):
+    def workhorse(self, devinfo):
         # Do the thing
         # Note to self, core abstraction is designed to get to a point where this class does the full shebang from
         # start to finish, and NorseTech.py just calls this every time a new drive is added.  That means
