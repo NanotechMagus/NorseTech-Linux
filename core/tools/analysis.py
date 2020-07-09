@@ -1,12 +1,13 @@
 #!/bin/python3.8
 
 # Standard Library Imports
-import os, sys
+import os, platform
 from pathlib import Path
 
 # Locally Developed Imports
 
 # Third Party Imports
+
 
 class Norsalysis:
     """The class to catalogue and analyze everything within a specific Path--recursively--, and produce a JSON or CSV file of the output.
