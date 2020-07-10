@@ -2,7 +2,6 @@
 
 # Standard Library Imports
 import os
-import platform
 import re
 from pathlib import Path
 
@@ -17,18 +16,14 @@ class Norsalysis:
 
     """
 
-    def __init__(
-            self,
-            pathloc: Path,
-            opstyle = "json"
-    ):
+    def __init__(self, pathloc: Path):
         self.pathloc = pathloc
-        self.opstyle = opstyle
         self.masterlist = {
             "Directories": [],
             "DCount": 0,
             "Files": [],
             "FCount": 0,
+            "FileTyping": {},
             "Full List": {}
         }
 
@@ -71,7 +66,7 @@ class Norsalysis:
             self.__countUpdate("d")
             return self.masterlist
 
-    def fileTyping(self, mlist: list):
+    def fileTyping(self, mlist=None):
         """Create a dictionary of all filetypes in a given list
 
         :param mlist: List of full paths to file.  ex: ["/ect/test.txt"]
@@ -79,7 +74,11 @@ class Norsalysis:
         :returns: dict -- dict of itemized filetypes; keys are filetypes, values are list of all files matching type
         :raises: Exception -- general exception
         """
+        if not mlist:
+            mlist = self.masterlist['Files']
+
         typedict = {}
+
         try:
             for x in mlist:
                 splitthis = os.path.splitext(x)
@@ -93,7 +92,7 @@ class Norsalysis:
         except Exception as err:
             print(f"Error: {err}")
         finally:
-            return typedict
+            self.masterlist["Filetyping"] = typedict
 
     def __countUpdate(self, ftype: str):
         """Updates the FCount or DCount value in self.masterlist
@@ -161,7 +160,6 @@ class DeviceInfo:
                     self.devinf["BlockInfo"][tempdata[0]] = tempdata[1]
         except FileNotFoundError as err:
             print(f'Error! {err}')
-
 
     def dev_getdata(self, cmd, params):
         if not self.devloc:

@@ -12,6 +12,7 @@
 
 # Standard Library Imports
 import re
+import asyncio
 import sys
 
 # Locally Developed Imports
@@ -21,13 +22,13 @@ from core.core import NorseTech as norse
 import pyudev
 
 
-def main():
+async def main():
     config = {}
     while True:
-        monitor_loop(config)
+        await monitor_loop(config)
 
 
-def monitor_loop(config: dict):
+async def monitor_loop(config: dict):
 
     context = pyudev.Context()
     minotaur = pyudev.Monitor.from_netlink(context)
@@ -37,11 +38,11 @@ def monitor_loop(config: dict):
         if device.action == 'add':
             try:
                 maze = norse(config)
-                maze.workhorse(device)
+                await maze.workhorse(device)
             except FileNotFoundError:
                 print(f'Cannot find device or device does not exist.  Please try again later.')
                 sys.exit(0)
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
