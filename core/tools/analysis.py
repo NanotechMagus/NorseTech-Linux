@@ -190,3 +190,8 @@ class RegexDict(dict):
     def get_matching(self, event):
         return (self[key] for key in self if re.match(key, event))
 
+
+class NorseLogistics():
+
+    def __init__(self):
+        self.initiate = None
